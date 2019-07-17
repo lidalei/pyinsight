@@ -13,8 +13,6 @@ from insight.v1 import product_insight_api_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-# FIXME, logging.
-
 
 # ProductInsightServicer implements methods of the ProductInsightAPIServicer service.
 class ProductInsightServicer(product_insight_api_pb2_grpc.ProductInsightAPIServicer):
@@ -87,7 +85,6 @@ def serve(args):
 
 
 if __name__ == '__main__':
-    logging.basicConfig()
 
     parser = argparse.ArgumentParser()
 
@@ -119,6 +116,21 @@ if __name__ == '__main__':
         help='password used to setup basic authorization'
     )
 
+    parser.add_argument(
+        '--verbose',
+        default=False,
+        type=bool,
+        help='verbose output',
+    )
+
     args, _ = parser.parse_known_args()
 
+    log_level = logging.WARNING
+    if args.verbose:
+        log_level = logging.INFO
+
+    logging.basicConfig(
+        level=log_level,
+    )
+    # FIXME! Add unit test.
     serve(args)

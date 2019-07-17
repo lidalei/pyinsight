@@ -38,5 +38,20 @@ pipenv run python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. in
 pipenv install grpcio
 # install protobuf
 pipenv install protobuf
-
 ```
+
+* Run server
+
+```shell
+pipenv run python server.py --port 5000 --datafile=transactions.json
+```
+
+* Talk to server
+
+```shell
+pipenv run python client.py --address=localhost:5000
+```
+
+* TODO
+  * See FIXME!
+  * gRPC gateway

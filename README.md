@@ -28,5 +28,15 @@ prototool config init
 * Generate Python code
 
 ```shell
-pipenv run python -m grpc_tools.protoc -I. --python_out=./gen --grpc_python_out=./gen product_insight_api.proto
+pipenv run python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. insight/v1/product_insight_api.proto
+```
+
+* Create API server
+
+```shell
+# install grpcio
+pipenv install grpcio
+# install protobuf
+pipenv install protobuf
+
 ```

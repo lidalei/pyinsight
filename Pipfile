@@ -7,6 +7,8 @@ verify_ssl = true
 grpcio-tools = "*"
 
 [packages]
+grpcio = "*"
+protobuf = "*"
 
 [requires]
 python_version = "3.7"

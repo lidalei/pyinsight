@@ -16,3 +16,17 @@ pipenv --python $(which python3)
 ```shell
 pipenv install -d grpcio-tools
 ```
+
+* Define API in a proto file and init prototool
+
+```shell
+prototool config init
+# lint
+# prototool lint
+```
+
+* Generate Python code
+
+```shell
+pipenv run python -m grpc_tools.protoc -I. --python_out=./gen --grpc_python_out=./gen product_insight_api.proto
+```

@@ -1,0 +1,17 @@
+# Protoc directives.
+protoc:
+  version: 3.8.0
+
+# Lint directives.
+lint:
+  group: uber2
+
+# Code generation directives.
+# generate:
+#   plugins:
+#     - name: python
+#       output: ../gen/proto/python
+  
+#     - name: python-grpc
+#       path: /usr/local/bin/grpc_python_plugin
+#       output: ../gen/proto/python

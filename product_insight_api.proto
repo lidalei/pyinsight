@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package insight.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// ProductInsightAPI provides insight about product. 
+service ProductInsightAPI {
+    // GetSalesCount returns sales count for a product.
+    rpc GetSalesCount(GetSalesCountRequest) returns (GetSalesCountResponse);
+}
+
+message GetSalesCountRequest {
+    google.protobuf.Timestamp start_time = 1;
+    google.protobuf.Timestamp end_time = 2;
+    int64 product_id = 3;
+}
+
+message GetSalesCountResponse {
+    int64 product_id = 1;
+    int64 sales_count = 2;
+}

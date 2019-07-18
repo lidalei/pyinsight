@@ -3,16 +3,11 @@ syntax = "proto3";
 package insight.v1;
 
 import "google/protobuf/timestamp.proto";
-import "google/api/annotations.proto";
 
 // ProductInsightAPI provides insight about product. 
 service ProductInsightAPI {
     // GetSalesCount returns sales count for a product.
-    rpc GetSalesCount(GetSalesCountRequest) returns (GetSalesCountResponse) {
-        option (google.api.http) = {
-          get: "/v1/product/"
-        };
-    };
+    rpc GetSalesCount(GetSalesCountRequest) returns (GetSalesCountResponse) {}
 }
 
 message GetSalesCountRequest {

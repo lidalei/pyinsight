@@ -43,13 +43,23 @@ class ProductInsightServicer(product_insight_api_pb2_grpc.ProductInsightAPIServi
                         products_inverted_index[product_id] = [now]
 
         self.products_inverted_index = products_inverted_index
+        self.access_token = args.access_token
 
     def GetSalesCount(
             self,
             request: product_insight_api_pb2.GetSalesCountRequest,
-            context
+            context: grpc.ServicerContext
     ) -> product_insight_api_pb2.GetSalesCountResponse:
         # FIXME! Observability.
+        # authorization
+        client_access_token = ''
+        for metadata in context.invocation_metadata():
+            if 'authorization' == metadata.key:
+                client_access_token = str(metadata.value).replace('Bearer ', '', 1)
+        if client_access_token != self.access_token:
+            context.set_code(grpc.StatusCode.UNAUTHENTICATED)
+            return product_insight_api_pb2.GetSalesCountResponse()
+
         start_time = request.start_time  # type: timestamp_pb2.Timestamp
         end_time = request.end_time  # type: timestamp_pb2.Timestamp
         product_id = request.product_id  # type: int
@@ -86,8 +96,19 @@ def serve(args):
         reflection.SERVICE_NAME,
     )
     reflection.enable_server_reflection(service_names, server)
-    # FIXME. TLS.
-    server.add_insecure_port('[::]:{port}'.format(port=args.port))
+
+    # read key and certificate
+    with open(args.tls_key, 'rb') as f:
+        tlskey = f.read()
+
+    with open(args.tls_cert, 'rb') as f:
+        tlscert = f.read()
+
+    # create server credentials
+    credentials = grpc.ssl_server_credentials([[tlskey, tlscert]])
+
+    server.add_secure_port('[::]:{port}'.format(port=args.port), server_credentials=credentials)
+
     _LOGGER.info('starting server')
     server.start()
     _LOGGER.info('server started')
@@ -130,18 +151,24 @@ if __name__ == '__main__':
         help='data file to parse data, it is usually a DB in a real service',
     )
 
-    # FIXME! Basic auth.
     parser.add_argument(
-        '--username',
-        default='dev',
+        '--tls-key',
+        default='key.pem',
         type=str,
-        help='username used to setup basic authorization',
+        help='TLS private key file, never commit'
     )
     parser.add_argument(
-        '--password',
+        '--tls-cert',
+        default='certificate.pem',
+        type=str,
+        help='TLS certificate file'
+    )
+
+    parser.add_argument(
+        '--access-token',
         default='guess',
         type=str,
-        help='password used to setup basic authorization'
+        help='access token used to setup authorization'
     )
 
     parser.add_argument(

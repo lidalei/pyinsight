@@ -1,5 +1,8 @@
 import argparse
+import functools
 import logging
+import signal
+import threading
 import time
 from concurrent import futures
 import grpc
@@ -13,6 +16,9 @@ from insight.v1 import product_insight_api_pb2
 from insight.v1 import product_insight_api_pb2_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
+_SERVER_GRACEFUL_STOP_PERIOD = 10
+
+_LOGGER = logging.getLogger('insight/v1')
 
 
 # ProductInsightServicer implements methods of the ProductInsightAPIServicer service.
@@ -82,16 +88,28 @@ def serve(args):
     reflection.enable_server_reflection(service_names, server)
     # FIXME. TLS.
     server.add_insecure_port('[::]:{port}'.format(port=args.port))
-    logging.info('starting server')
+    _LOGGER.info('starting server')
     server.start()
-    logging.info('server started')
+    _LOGGER.info('server started')
 
-    try:
-        while True:
-            time.sleep(_ONE_DAY_IN_SECONDS)
-    except KeyboardInterrupt:
-        # FIXME! Graceful stop.
-        server.stop(0)
+    # stop gracefully
+    graceful_stop_handler = functools.partial(handler, server=server)
+    signal.signal(signal.SIGINT, graceful_stop_handler)
+    signal.signal(signal.SIGTERM, graceful_stop_handler)
+
+    # loop forever
+    while True:
+        time.sleep(_ONE_DAY_IN_SECONDS)
+
+
+def handler(signum, frame, server: grpc.Server = None) -> None:
+    _LOGGER.info('received signal {}'.format(signum))
+
+    if server is not None:
+        event = server.stop(_SERVER_GRACEFUL_STOP_PERIOD)  # type: threading.Event
+        # wait until server stops all in-flight rpcs or graceful period expires
+        event.wait()
+        exit(0)
 
 
 if __name__ == '__main__':
@@ -139,8 +157,16 @@ if __name__ == '__main__':
     if args.verbose:
         log_level = logging.INFO
 
-    logging.basicConfig(
-        level=log_level,
-    )
+    _LOGGER.setLevel(log_level)
+
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # add formatter to ch
+    ch.setFormatter(formatter)
+    # add ch to logger
+    _LOGGER.addHandler(ch)
+
     # FIXME! Add unit test.
     serve(args)

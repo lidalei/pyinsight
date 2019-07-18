@@ -9,6 +9,7 @@ grpcio-tools = "*"
 [packages]
 grpcio = "*"
 protobuf = "*"
+grpcio-reflection = "*"
 
 [requires]
 python_version = "3.7"

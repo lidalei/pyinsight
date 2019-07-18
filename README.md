@@ -38,6 +38,8 @@ pipenv run python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. in
 pipenv install grpcio
 # install protobuf
 pipenv install protobuf
+# install grpcio-reflection
+pipenv install grpcio-reflection
 ```
 
 * Run server
@@ -50,6 +52,17 @@ pipenv run python server.py --port 5000 --datafile=transactions.json
 
 ```shell
 pipenv run python client.py --address=localhost:5000
+```
+
+or use [grpcurl](https://github.com/fullstorydev/grpcurl#installation)
+
+
+```shell
+grpcurl -plaintext -d '{"start_time": "2019-01-01T00:00:00Z", "end_time":"2019-08-01T00:00:00Z", "product_id": 185}' localhost:5000 insight.v1.ProductInsightAPI/GetSalesCount
+#{
+#  "product_id": 185,
+#  "sales_count": 97
+#}
 ```
 
 * TODO

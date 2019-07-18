@@ -3,6 +3,7 @@ import logging
 import time
 from concurrent import futures
 import grpc
+from grpc_reflection.v1alpha import reflection
 import json
 import typing
 from datetime import datetime
@@ -72,9 +73,17 @@ def serve(args):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=100))
     product_insight_api_pb2_grpc.add_ProductInsightAPIServicer_to_server(
         ProductInsightServicer(args.datafile), server)
+    # the reflection service will be aware of "ProductInsightAPI" and "ServerReflection" services.
+    service_names = (
+        product_insight_api_pb2.DESCRIPTOR.services_by_name['ProductInsightAPI'].full_name,
+        reflection.SERVICE_NAME,
+    )
+    reflection.enable_server_reflection(service_names, server)
     # FIXME. TLS.
     server.add_insecure_port('[::]:{port}'.format(port=args.port))
+    logging.info('starting server')
     server.start()
+    logging.info('server started')
 
     try:
         while True:

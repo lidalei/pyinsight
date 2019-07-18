@@ -56,7 +56,6 @@ pipenv run python client.py --address=localhost:5000
 
 or use [grpcurl](https://github.com/fullstorydev/grpcurl#installation)
 
-
 ```shell
 # list all services
 grpcurl -plaintext localhost:5000 list
@@ -67,7 +66,7 @@ gives
 ```text
 grpc.reflection.v1alpha.ServerReflection
 insight.v1.ProductInsightAPI
-``` 
+```
 
 ```shell
 # describe ProductInsightAPI
@@ -83,7 +82,7 @@ service ProductInsightAPI {
 }
 ```
 
-```
+```shell
 grpcurl -plaintext -d '{"start_time": "2019-01-01T00:00:00Z", "end_time":"2019-08-01T00:00:00Z", "product_id": 185}' localhost:5000 insight.v1.ProductInsightAPI/GetSalesCount
 ```
 
@@ -96,6 +95,16 @@ gives
 }
 ```
 
-* TODO
+* Add Dockerfile
+
+```shell
+# build docker image
+docker build --pull -t insight:v1 .
+# run docker container
+docker run -p 5000:80 -v $TRANSACTION_FILE:/data/transactions.json insight:v1
+```
+
+* TODOs
   * See FIXME!
-  * gRPC gateway
+  * horizontaly scale the service with kubernetes
+  * expose the service as an HTTP service with gRPC gateway

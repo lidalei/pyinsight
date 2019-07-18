@@ -58,11 +58,42 @@ or use [grpcurl](https://github.com/fullstorydev/grpcurl#installation)
 
 
 ```shell
+# list all services
+grpcurl -plaintext localhost:5000 list
+```
+
+gives
+
+```text
+grpc.reflection.v1alpha.ServerReflection
+insight.v1.ProductInsightAPI
+``` 
+
+```shell
+# describe ProductInsightAPI
+grpcurl -plaintext localhost:5000 describe insight.v1.ProductInsightAPI
+```
+
+gives
+
+```text
+insight.v1.ProductInsightAPI is a service:
+service ProductInsightAPI {
+  rpc GetSalesCount ( .insight.v1.GetSalesCountRequest ) returns ( .insight.v1.GetSalesCountResponse );
+}
+```
+
+```
 grpcurl -plaintext -d '{"start_time": "2019-01-01T00:00:00Z", "end_time":"2019-08-01T00:00:00Z", "product_id": 185}' localhost:5000 insight.v1.ProductInsightAPI/GetSalesCount
-#{
-#  "product_id": 185,
-#  "sales_count": 97
-#}
+```
+
+gives
+
+```text
+{
+  "product_id": 185,
+  "sales_count": 97
+}
 ```
 
 * TODO

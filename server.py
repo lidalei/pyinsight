@@ -43,6 +43,7 @@ class ProductInsightServicer(product_insight_api_pb2_grpc.ProductInsightAPIServi
             request: product_insight_api_pb2.GetSalesCountRequest,
             context
     ) -> product_insight_api_pb2.GetSalesCountResponse:
+        # FIXME! Observability.
         start_time = request.start_time  # type: timestamp_pb2.Timestamp
         end_time = request.end_time  # type: timestamp_pb2.Timestamp
         product_id = request.product_id  # type: int

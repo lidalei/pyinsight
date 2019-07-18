@@ -40,6 +40,8 @@ pipenv install grpcio
 pipenv install protobuf
 # install grpcio-reflection
 pipenv install grpcio-reflection
+# generate tls certs, choose common as `localhost`. Note the private key file should never be commmited in reality.
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out certificate.pem
 ```
 
 * Run server

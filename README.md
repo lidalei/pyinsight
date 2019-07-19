@@ -118,6 +118,10 @@ docker build --pull -t insight:v1 .
 docker run -p 5000:80 -v $TRANSACTION_FILE:/data/transactions.json insight:v1
 ```
 
+## Authentication
+
+The servers use access token to authenticate a client. Just supply `--access-token=$ACCESS_TOKEN` when starting a server or client.
+
 * TODOs
   * See FIXME!
   * horizontaly scale the service with kubernetes

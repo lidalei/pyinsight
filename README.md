@@ -122,7 +122,9 @@ docker run -p 5000:80 -v $TRANSACTION_FILE:/data/transactions.json insight:v1
 
 The servers use access token to authenticate a client. Just supply `--access-token=$ACCESS_TOKEN` when starting a server or client.
 
-* TODOs
-  * See FIXME!
-  * horizontaly scale the service with kubernetes
-  * expose the service as an HTTP service with gRPC gateway
+## TODOs
+
+* See FIXME!
+* horizontaly scale the service with kubernetes
+* expose the service as an HTTP service with gRPC gateway
+* improve naming and error handling

@@ -2,6 +2,16 @@
 
 Insight service in Python
 
+## Assumptions
+
+The gRPC service is devoloped assuming that a data pipeline processes and stores daily transactions data in an analytical database, for example a Clickhouse DB. Hence, the file is served as a mock for the DB.
+
+The Clickhouse table can be partitioned by transaction date and indexed by `product_id`. And the third role is `customer_id`. Note a customer can buy a product several times in one transaction. We can have an additional column `count`.
+
+Though talking with a gRPC service from multiple languages is simple, we can setup gRPC gateway to proxy the service as an HTTP service.
+
+## Development
+
 * Setup a pipenv environment
 
 ```shell
@@ -11,13 +21,15 @@ pipenv --python $(which python3)
 
 * [Install prototool](https://github.com/uber/prototool#installation)
 
-* Install Python grpc
+* Install Python grpc tools
 
 ```shell
 pipenv install -d grpcio-tools
 ```
 
 * Define API in a proto file and init prototool
+
+insight/v1/product_insight_api.proto
 
 ```shell
 prototool config init
